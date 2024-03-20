@@ -46,8 +46,28 @@ create table Letenka (
     prijmeni nvarchar2(255),
 
     idUctu int,
-    idLetu int,
+    idLetu int not null ,
     CONSTRAINT fk_idUctu FOREIGN KEY (idUctu) REFERENCES Ucet(idUctu) ON DELETE CASCADE,
     CONSTRAINT fk_idLetu FOREIGN KEY (idLetu) REFERENCES let(idLetu) ON DELETE CASCADE
 );
 
+INSERT INTO Ucet (idUctu, jmeno, prijmeni, rokNarozeni) VALUES
+(1, 'Jan', 'Novák', 1985);
+
+INSERT INTO PremiovyUcet (idUctu, sleva) VALUES
+(1, 10);
+
+INSERT INTO Letiste (idLetiste, nazev, mesto, stat) VALUES
+(1, 'Letiště Václava Havla Praha', 'Praha', 'Česká republika');
+
+INSERT INTO Letiste (idLetiste, nazev, mesto, stat) VALUES
+(2, 'Letiště Václava Havla Praha', 'Brno', 'Česká republika');
+
+INSERT INTO LeteckaSpolecnost (idSpolecnosti, nazev, zemePusobeni, reditel) VALUES
+(1, 'Czech Airlines', 'Česká republika', 'Petr Nový');
+
+INSERT INTO Let (idLetu, typLetadla, pocetMist, idSpolecnosti, idLetiste_prilet, idLetiste_odlet) VALUES
+(1, 'Airbus A320', 180, 1, 1, 2);
+
+INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idUctu, idLetu) VALUES
+(1, 1000, 'Economy', 1, 'Jan', 'Novák', 1, 1);
