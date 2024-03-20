@@ -14,7 +14,9 @@ create table Letiste (
     kodLetiste nvarchar2(3) primary key,
     nazev nvarchar2(255) not null,
     mesto nvarchar2(255) not null,
-    stat nvarchar2(255) not null
+    stat nvarchar2(255) not null,
+    -- kontrola vstupu (kod letiste musi mit prave 3 pismena)
+    CONSTRAINT CheckNameLength CHECK (length(kodLetiste) = 3)
 );
 
 create table LeteckaSpolecnost (
@@ -51,6 +53,7 @@ create table Letenka (
     CONSTRAINT fk_idLetu FOREIGN KEY (idLetu) REFERENCES let(idLetu) ON DELETE CASCADE
 );
 
+-- testovaci naplneni databaze
 INSERT INTO Ucet (idUctu, jmeno, prijmeni, rokNarozeni) VALUES
 (1, 'Jan', 'Novák', 1985);
 
@@ -71,4 +74,5 @@ INSERT INTO Let (idLetu, typLetadla, pocetMist, idSpolecnosti, kodLetiste_prilet
 
 INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idUctu, idLetu) VALUES
 (1, 1000, 'Economy', 1, 'Jan', 'Novák', 1, 1);
+
 
