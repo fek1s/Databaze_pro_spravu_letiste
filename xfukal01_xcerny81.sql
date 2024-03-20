@@ -16,14 +16,16 @@ create table Letiste (
     mesto nvarchar2(255) not null,
     stat nvarchar2(255) not null,
     -- kontrola vstupu (kod letiste musi mit prave 3 pismena)
-    CONSTRAINT CheckNameLength CHECK (length(kodLetiste) = 3)
+    CONSTRAINT CheckCodeLength CHECK (length(kodLetiste) = 3)
 );
 
 create table LeteckaSpolecnost (
-    idSpolecnosti int primary key,
+    ICO int primary key,
     nazev nvarchar2(255) not null,
     zemePusobeni nvarchar2(255) not null,
-    reditel nvarchar2(255) not null
+    reditel nvarchar2(255) not null,
+    -- kontrola vstupu (ICO musi mit prave 8 cislic)
+    CONSTRAINT CheckICOLength CHECK (length(ICO) = 8)
 );
 
 create table Let (
@@ -31,10 +33,10 @@ create table Let (
     typLetadla nvarchar2(255) not null,
     pocetMist int not null,
 
-    idSpolecnosti int,
+    ICO int,
     kodLetiste_prilet nvarchar2(3),
     kodLetiste_odlet nvarchar2(3),
-    CONSTRAINT fk_idSpolecnosti FOREIGN KEY (idSpolecnosti) REFERENCES LeteckaSpolecnost(idSpolecnosti)  ON DELETE CASCADE,
+    CONSTRAINT fk_ICO FOREIGN KEY (ICO) REFERENCES LeteckaSpolecnost(ICO)  ON DELETE CASCADE,
     CONSTRAINT fk_kodLetiste_prilet FOREIGN KEY (kodLetiste_prilet) REFERENCES Letiste(kodLetiste)  ON DELETE CASCADE,
     CONSTRAINT fk_kodLetiste_odlet FOREIGN KEY (kodLetiste_odlet) REFERENCES Letiste(kodLetiste)  ON DELETE CASCADE
 );
@@ -66,13 +68,14 @@ INSERT INTO Letiste (kodLetiste, nazev, mesto, stat) VALUES
 INSERT INTO Letiste (kodLetiste, nazev, mesto, stat) VALUES
 ('BRQ', 'Letiště Turany', 'Brno', 'Česká republika');
 
-INSERT INTO LeteckaSpolecnost (idSpolecnosti, nazev, zemePusobeni, reditel) VALUES
-(1, 'Czech Airlines', 'Česká republika', 'Petr Nový');
+INSERT INTO LeteckaSpolecnost (ICO, nazev, zemePusobeni, reditel) VALUES
+(12345678, 'Czech Airlines', 'Česká republika', 'Petr Nový');
 
-INSERT INTO Let (idLetu, typLetadla, pocetMist, idSpolecnosti, kodLetiste_prilet, kodLetiste_odlet) VALUES
-(1, 'Airbus A320', 180, 1, 'PRG', 'BRQ');
+INSERT INTO Let (idLetu, typLetadla, pocetMist, ICO, kodLetiste_prilet, kodLetiste_odlet) VALUES
+(1, 'Airbus A320', 180, 12345678, 'PRG', 'BRQ');
 
 INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idUctu, idLetu) VALUES
 (1, 1000, 'Economy', 1, 'Jan', 'Novák', 1, 1);
+
 
 
