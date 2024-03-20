@@ -10,7 +10,7 @@ create table Ucet (
     idUctu int primary key,
     jmeno nvarchar2(255) not null,
     prijmeni nvarchar2(255) not null,
-    datumNarozeni date not null
+    rokNarozeni int not null
 );
 
 create table PremiovyUcet (
@@ -24,7 +24,7 @@ create table Letentka (
     trida nvarchar2(255) not null,
     sedadlo int not null,
     jmeno nvarchar2(255),
-    prijmeni nvarchar2(255)
+    prijmeni nvarchar2(255),
 );
 
 create table Let (
@@ -47,3 +47,8 @@ create table LeteckaSpolecnost (
     reditel nvarchar2(255) not null
 );
 
+create table LetenkaUctu (
+    idUctu int REFERENCES Ucet(idUctu) ,
+    idLetentky int REFERENCES Letentka(idLetentky)
+
+);
