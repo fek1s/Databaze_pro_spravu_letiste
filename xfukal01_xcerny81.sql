@@ -5,9 +5,12 @@ create table Ucet (
     rokNarozeni int not null
 );
 
+--Ucet je generalizaci entity PremiovyUcet obsahujici navic atribut sleva
 create table PremiovyUcet (
     idUctu int primary key REFERENCES Ucet(idUctu) ON DELETE CASCADE,
-    sleva int not null
+    sleva int not null,
+    -- kontrola vstupu slevy
+    CONSTRAINT CheckSale CHECK (sleva <= 100 and sleva >= 0)
 );
 
 create table Letiste (
@@ -60,7 +63,7 @@ INSERT INTO Ucet (idUctu, jmeno, prijmeni, rokNarozeni) VALUES
 (1, 'Jan', 'Novák', 1985);
 
 INSERT INTO PremiovyUcet (idUctu, sleva) VALUES
-(1, 10);
+(1, 80);
 
 INSERT INTO Letiste (kodLetiste, nazev, mesto, stat) VALUES
 ('PRG', 'Letiště Václava Havla Praha', 'Praha', 'Česká republika');
@@ -76,6 +79,7 @@ INSERT INTO Let (idLetu, typLetadla, pocetMist, ICO, kodLetiste_prilet, kodLetis
 
 INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idUctu, idLetu) VALUES
 (1, 1000, 'Economy', 1, 'Jan', 'Novák', 1, 1);
+
 
 
 
