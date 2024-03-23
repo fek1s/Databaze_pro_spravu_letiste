@@ -1,4 +1,3 @@
-
 create table Ucet (
     --id Uctu generovano automaticky
     idUctu number generated always as identity primary key,
@@ -7,7 +6,8 @@ create table Ucet (
     rokNarozeni int not null
 );
 
---Ucet je generalizaci entity PremiovyUcet obsahujici navic atribut sleva
+--Ucet je generalizaci entity PremiovyUcet obsahujici navic atribut sleva, pomoci konstrukce REFERENCES je atribut idUctu propojen
+--PremiovyUcet tedy je tedy zavisly na Ucet a atribut sleva lze priradit pouze jiz existujicimu uctu
 create table PremiovyUcet (
     idUctu int primary key REFERENCES Ucet(idUctu) ON DELETE CASCADE,
     sleva int not null,
@@ -66,7 +66,7 @@ INSERT INTO Ucet (jmeno, prijmeni, rokNarozeni) VALUES
 ('Jan', 'Novák', 1985);
 
 INSERT INTO Ucet (jmeno, prijmeni, rokNarozeni) VALUES
-('Petr', 'Pavel', 1970);
+('Bohuslav', 'Pavel', 1970);
 
 INSERT INTO PremiovyUcet (idUctu, sleva) VALUES
 (2, 10);
@@ -75,7 +75,7 @@ INSERT INTO Letiste (kodLetiste, nazev, mesto, stat) VALUES
 ('PRG', 'Letiště Václava Havla Praha', 'Praha', 'Česká republika');
 
 INSERT INTO Letiste (kodLetiste, nazev, mesto, stat) VALUES
-('BRQ', 'Letiště Turany', 'Brno', 'Česká republika');
+('BRQ', 'Letiště Tuřany', 'Brno', 'Česká republika');
 
 INSERT INTO LeteckaSpolecnost (ICO, nazev, zemePusobeni, reditel) VALUES
 (12345678, 'Czech Airlines', 'Česká republika', 'Petr Nový');
@@ -85,6 +85,7 @@ INSERT INTO Let (idLetu, typLetadla, pocetMist, ICO, kodLetiste_prilet, kodLetis
 
 INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu) VALUES
 (1, 1000, 'Economy', 1, 'Jakub', 'Horuba', 1);
+
 
 
 
