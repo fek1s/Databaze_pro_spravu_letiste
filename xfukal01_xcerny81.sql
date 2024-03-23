@@ -68,6 +68,8 @@ INSERT INTO Ucet (jmeno, prijmeni, rokNarozeni) VALUES
 INSERT INTO Ucet (jmeno, prijmeni, rokNarozeni) VALUES
 ('Petr', 'Pavel', 1970);
 
+INSERT INTO PremiovyUcet (idUctu, sleva) VALUES
+(2, 10);
 
 INSERT INTO Letiste (kodLetiste, nazev, mesto, stat) VALUES
 ('PRG', 'Letiště Václava Havla Praha', 'Praha', 'Česká republika');
