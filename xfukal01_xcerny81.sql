@@ -156,7 +156,7 @@ WHERE EXISTS(
     SELECT *
     FROM Letenka LE
     WHERE L.idLetu = LE.idLetu
-)
+);
 
 -- Dotaz 4: vypisuje vsechny cestujici kteri leti s leteckeckou společností Ryanair
 SELECT L.jmeno , L.prijmeni
