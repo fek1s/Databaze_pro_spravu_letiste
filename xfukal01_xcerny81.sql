@@ -103,3 +103,8 @@ INSERT INTO Let (idLetu, typLetadla, pocetMist, ICO, kodLetiste_prilet, kodLetis
 
 INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu) VALUES
 (1, 1000, 'Economy', 1, 'Jakub', 'Horuba', 1);
+
+-- Dotaz 1: Vypisuje jmeno a prijmeni zakaznika, ktery ma premiovy ucet a jeho slevu.
+SELECT U.jmeno, U.prijmeni, PU.sleva
+FROM Ucet U
+JOIN PremiovyUcet PU ON U.idUctu = PU.idUctu;
