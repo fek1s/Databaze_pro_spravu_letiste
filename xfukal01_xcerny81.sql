@@ -108,3 +108,18 @@ INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu) V
 SELECT U.jmeno, U.prijmeni, PU.sleva
 FROM Ucet U
 JOIN PremiovyUcet PU ON U.idUctu = PU.idUctu;
+
+-- Dotaz 2: Vypisuje celkovy pocet mist v jednotlivych letech pro kazdou letadlo-spolecnost.
+SELECT LS.nazev, L.typLetadla, SUM(L.pocetmist) AS celkovyPocetMist
+FROM Let L
+JOIN LeteckaSpolecnost LS ON L.ICO = LS.ICO
+GROUP BY LS.nazev, L.typLetadla;
+
+-- Dotaz 3: Vypisuje vsechny lety, ktere maji nejake volna mista.
+SELECT *
+FROM Let L
+WHERE EXISTS(
+    SELECT 1
+    FROM Letenka LE
+    WHERE L.idLetu = LE.idLetu
+)
