@@ -107,6 +107,12 @@ INSERT INTO Letiste (kodLetiste, nazev, mesto, stat) VALUES
 INSERT INTO Letiste (kodLetiste, nazev, mesto, stat) VALUES
 ('LON', 'London Airport', 'London', 'UK');
 
+INSERT INTO Letiste (kodLetiste, nazev, mesto, stat) VALUES
+('KTW', 'Katowice Airport', 'Katowice', 'PL');
+
+INSERT INTO Letiste (kodLetiste, nazev, mesto, stat) VALUES
+('OSR', 'Ostrava Airport', 'Ostrava', 'CZ');
+
 INSERT INTO LeteckaSpolecnost (ICO, nazev, zemePusobeni, reditel) VALUES
 (12345678, 'Czech Airlines', 'Česká republika', 'Petr Nový');
 
@@ -118,6 +124,9 @@ INSERT INTO Let (idLetu, typLetadla, pocetMist, ICO, kodLetiste_prilet, kodLetis
 
 INSERT INTO Let (idLetu, typLetadla, pocetMist, ICO, kodLetiste_prilet, kodLetiste_odlet) VALUES
 (2, 'Boeing 737', 220, 89765432, 'PRG', 'LON');
+
+INSERT INTO Let (idLetu, typLetadla, pocetMist, ICO, kodLetiste_prilet, kodLetiste_odlet) VALUES
+(3, 'Boeing 737', 220, 89765432, 'KTW', 'OSR');
 
 INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu) VALUES
 (1, 1000, 'Economy', 1, 'Jakub', 'Horuba', 1);
@@ -144,7 +153,7 @@ GROUP BY LS.nazev, L.typLetadla;
 SELECT *
 FROM Let L
 WHERE EXISTS(
-    SELECT 1
+    SELECT *
     FROM Letenka LE
     WHERE L.idLetu = LE.idLetu
 )
