@@ -158,7 +158,7 @@ FROM Let L
 JOIN LeteckaSpolecnost LS ON L.ICO = LS.ICO
 GROUP BY LS.nazev, L.typLetadla;
 
--- Dotaz 4: Vypisuje vsechny lety, ktere maji nejake volna mista.
+-- Dotaz 4: Vypisuje vsechny lety, ktere maji nejake volna mista, které lze zakoupit
 SELECT *
 FROM Let L
 WHERE EXISTS(
