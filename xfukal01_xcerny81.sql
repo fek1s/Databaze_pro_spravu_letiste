@@ -148,3 +148,10 @@ WHERE EXISTS(
     FROM Letenka LE
     WHERE L.idLetu = LE.idLetu
 )
+
+-- Dotaz 4: vypisuje vsechny cestujici kteri leti s leteckeckou společností Ryanair
+SELECT L.jmeno , L.prijmeni
+FROM Letenka L
+JOIN Let LE ON L.idLetu = LE.idLetu
+JOIN LeteckaSpolecnost LS on LE.ICO = LS.ICO
+WHERE LS.nazev = 'Ryanair';
