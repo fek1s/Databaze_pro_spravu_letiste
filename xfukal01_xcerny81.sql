@@ -131,11 +131,11 @@ INSERT INTO Let (idLetu, typLetadla, pocetMist, ICO, kodLetiste_prilet, kodLetis
 INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu, idUctu) VALUES
 (1, 1000, 'Economy', 1, 'Jakub', 'Horuba', 1, 3);
 
-INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu) VALUES
-(2, 1200, 'Economy', 115, 'Jan', 'Prkenný', 2);
+INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu, idUctu) VALUES
+(2, 1200, 'Economy', 115, 'Jan', 'Prkenný', 2, 1);
 
-INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu) VALUES
-(3, 1200, 'Economy', 154, 'Richard', 'Blue', 2);
+INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu, idUctu) VALUES
+(3, 1200, 'Economy', 154, 'Richard', 'Blue', 2, 4);
 -- konec plneni databaze testovacimy daty
 
 -- Dotaz 1: Vypisuje jmeno a prijmeni zakaznika, ktery ma premiovy ucet a jeho slevu.
