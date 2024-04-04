@@ -86,8 +86,17 @@ INSERT INTO Ucet (jmeno, prijmeni, rokNarozeni) VALUES
 INSERT INTO Ucet (jmeno, prijmeni, rokNarozeni) VALUES
 ('Bohuslav', 'Pavel', 1970);
 
+INSERT INTO Ucet (jmeno, prijmeni, rokNarozeni) VALUES
+('Richard', 'Novotný', 2001);
+
+INSERT INTO Ucet (jmeno, prijmeni, rokNarozeni) VALUES
+('Jiří', 'Z Poděbrad', 1999);
+
 INSERT INTO PremiovyUcet (idUctu, sleva) VALUES
 (2, 10);
+
+INSERT INTO PremiovyUcet (idUctu, sleva) VALUES
+(4, 15);
 
 INSERT INTO Letiste (kodLetiste, nazev, mesto, stat) VALUES
 ('PRG', 'Letiště Václava Havla Praha', 'Praha', 'Česká republika');
@@ -95,14 +104,30 @@ INSERT INTO Letiste (kodLetiste, nazev, mesto, stat) VALUES
 INSERT INTO Letiste (kodLetiste, nazev, mesto, stat) VALUES
 ('BRQ', 'Letiště Tuřany', 'Brno', 'Česká republika');
 
+INSERT INTO Letiste (kodLetiste, nazev, mesto, stat) VALUES
+('LON', 'London Airport', 'London', 'UK');
+
 INSERT INTO LeteckaSpolecnost (ICO, nazev, zemePusobeni, reditel) VALUES
 (12345678, 'Czech Airlines', 'Česká republika', 'Petr Nový');
+
+INSERT INTO LeteckaSpolecnost (ICO, nazev, zemePusobeni, reditel) VALUES
+(89765432, 'Ryanair', 'Anglie', 'John Black');
 
 INSERT INTO Let (idLetu, typLetadla, pocetMist, ICO, kodLetiste_prilet, kodLetiste_odlet) VALUES
 (1, 'Airbus A320', 180, 12345678, 'PRG', 'BRQ');
 
+INSERT INTO Let (idLetu, typLetadla, pocetMist, ICO, kodLetiste_prilet, kodLetiste_odlet) VALUES
+(2, 'Boeing 737', 220, 89765432, 'PRG', 'LON');
+
 INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu) VALUES
 (1, 1000, 'Economy', 1, 'Jakub', 'Horuba', 1);
+
+INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu) VALUES
+(2, 1200, 'Economy', 115, 'Jan', 'Prkenný', 2);
+
+INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu) VALUES
+(3, 1200, 'Economy', 154, 'Richard', 'Blue', 2);
+-- konec plneni databaze testovacimy daty
 
 -- Dotaz 1: Vypisuje jmeno a prijmeni zakaznika, ktery ma premiovy ucet a jeho slevu.
 SELECT U.jmeno, U.prijmeni, PU.sleva
