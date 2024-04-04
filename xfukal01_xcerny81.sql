@@ -128,8 +128,8 @@ INSERT INTO Let (idLetu, typLetadla, pocetMist, ICO, kodLetiste_prilet, kodLetis
 INSERT INTO Let (idLetu, typLetadla, pocetMist, ICO, kodLetiste_prilet, kodLetiste_odlet) VALUES
 (3, 'Boeing 737', 220, 89765432, 'KTW', 'OSR');
 
-INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu) VALUES
-(1, 1000, 'Economy', 1, 'Jakub', 'Horuba', 1);
+INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu, idUctu) VALUES
+(1, 1000, 'Economy', 1, 'Jakub', 'Horuba', 1, 3);
 
 INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu) VALUES
 (2, 1200, 'Economy', 115, 'Jan', 'Prkenný', 2);
@@ -143,13 +143,19 @@ SELECT U.jmeno, U.prijmeni, PU.sleva
 FROM Ucet U
 JOIN PremiovyUcet PU ON U.idUctu = PU.idUctu;
 
--- Dotaz 2: Vypisuje celkovy pocet mist v jednotlivych letech pro kazdou letadlo-spolecnost.
+-- Dotaz 2: Vypisuje ceny letenek koupenych ucty lidi narozenych ve 21. stoleti
+SELECT U.jmeno, U.prijmeni, U.rokNarozeni, L.cena AS cenaLetenky
+FROM Letenka L
+JOIN Ucet U on L.idUctu = U.idUctu
+WHERE U.rokNarozeni > 1999;
+
+-- Dotaz 3: Vypisuje celkovy pocet mist v jednotlivych letech pro kazdou letadlo-spolecnost.
 SELECT LS.nazev, L.typLetadla, SUM(L.pocetmist) AS celkovyPocetMist
 FROM Let L
 JOIN LeteckaSpolecnost LS ON L.ICO = LS.ICO
 GROUP BY LS.nazev, L.typLetadla;
 
--- Dotaz 3: Vypisuje vsechny lety, ktere maji nejake volna mista.
+-- Dotaz 4: Vypisuje vsechny lety, ktere maji nejake volna mista.
 SELECT *
 FROM Let L
 WHERE EXISTS(
@@ -158,8 +164,8 @@ WHERE EXISTS(
     WHERE L.idLetu = LE.idLetu
 );
 
--- Dotaz 4: vypisuje vsechny cestujici kteri leti s leteckeckou společností Ryanair
-SELECT L.jmeno , L.prijmeni
+-- Dotaz 5: vypisuje vsechny cestujici kteri leti s leteckeckou společností Ryanair
+SELECT L.jmeno , L.prijmeni, LE.typLetadla
 FROM Letenka L
 JOIN Let LE ON L.idLetu = LE.idLetu
 JOIN LeteckaSpolecnost LS on LE.ICO = LS.ICO
