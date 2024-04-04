@@ -1,3 +1,21 @@
+drop table PREMIOVYUCET
+/
+
+drop table LETENKA
+/
+
+drop table UCET
+/
+
+drop table LET
+/
+
+drop table LETISTE
+/
+
+drop table LETECKASPOLECNOST
+/
+
 create table Ucet (
     --id Uctu generovano automaticky
     idUctu number generated always as identity primary key,
@@ -85,8 +103,3 @@ INSERT INTO Let (idLetu, typLetadla, pocetMist, ICO, kodLetiste_prilet, kodLetis
 
 INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu) VALUES
 (1, 1000, 'Economy', 1, 'Jakub', 'Horuba', 1);
-
-
-
-
-
