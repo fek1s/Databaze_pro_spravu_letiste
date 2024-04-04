@@ -146,13 +146,13 @@ SELECT U.jmeno, U.prijmeni, PU.sleva
 FROM Ucet U
 JOIN PremiovyUcet PU ON U.idUctu = PU.idUctu;
 
--- Dotaz 2: Vypisuje ceny letenek koupenych ucty lidi narozenych ve 21. stoleti
-SELECT U.jmeno, U.prijmeni, U.rokNarozeni, L.cena AS cenaLetenky
+-- Dotaz 2: Vypisuje ceny vsech letenek koupenych ucty lidi narozenych ve 21. stoleti
+SELECT Distinct U.jmeno, U.prijmeni, U.rokNarozeni, L.cena AS cenaLetenky
 FROM Letenka L
 JOIN Ucet U on L.idUctu = U.idUctu
 WHERE U.rokNarozeni > 1999;
 
--- Dotaz 3: Vypisuje celkovy pocet mist v jednotlivych letech pro kazdou letadlo-spolecnost.
+-- Dotaz 3: Vypisuje celkovy pocet mist v letech pro kazdou letadlo-spolecnost.
 SELECT LS.nazev, L.typLetadla, SUM(L.pocetmist) AS celkovyPocetMist
 FROM Let L
 JOIN LeteckaSpolecnost LS ON L.ICO = LS.ICO
