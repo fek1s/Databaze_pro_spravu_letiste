@@ -136,6 +136,9 @@ INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu, i
 
 INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu, idUctu) VALUES
 (3, 1200, 'Economy', 154, 'Richard', 'Blue', 2, 4);
+
+INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu, idUctu) VALUES
+(4, 899, 'Economy', 199, 'Richard', 'Novotny', 3, 3);
 -- konec plneni databaze testovacimy daty
 
 -- Dotaz 1: Vypisuje jmeno a prijmeni zakaznika, ktery ma premiovy ucet a jeho slevu.
@@ -159,7 +162,7 @@ GROUP BY LS.nazev, L.typLetadla;
 SELECT *
 FROM Let L
 WHERE EXISTS(
-    SELECT *
+    SELECT 1
     FROM Letenka LE
     WHERE L.idLetu = LE.idLetu
 );
