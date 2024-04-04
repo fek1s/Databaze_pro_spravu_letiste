@@ -178,3 +178,9 @@ WHERE LS.nazev = 'Ryanair';
 SELECT trida, AVG(cena) AS prumer_ceny
 FROM Letenka
 GROUP BY trida;
+
+-- Dotaz 7: vypisuje vsechny spolecnosti ktere provozuji lety s letadly Boeing (Boeing 737, 747...)
+SELECT Distinct LS.nazev
+FROM LeteckaSpolecnost LS
+JOIN Let L on LS.ICO = L.ICO
+Where L.typLetadla IN ('Boeing 737', 'Boeing 737 MAX', 'Boeing 747', 'Boeing 757');
