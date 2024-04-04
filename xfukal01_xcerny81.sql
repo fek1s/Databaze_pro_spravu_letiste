@@ -173,3 +173,8 @@ FROM Letenka L
 JOIN Let LE ON L.idLetu = LE.idLetu
 JOIN LeteckaSpolecnost LS on LE.ICO = LS.ICO
 WHERE LS.nazev = 'Ryanair';
+
+-- Dotaz 6: Vypočítá průměrnou cenu letenky pro každou třídu.
+SELECT trida, AVG(cena) AS prumer_ceny
+FROM Letenka
+GROUP BY trida;
