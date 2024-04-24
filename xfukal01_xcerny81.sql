@@ -54,7 +54,7 @@ create table LeteckaSpolecnost (
 create table Let (
     idLetu int primary key,
     typLetadla nvarchar2(255) not null,
-    pocetMist int not null,
+    pocetMist int not null, --POCET VOLNYCH MIST
 
     ICO int not null,
     kodLetiste_prilet nvarchar2(3) not null,
@@ -79,6 +79,48 @@ create table Letenka (
     CONSTRAINT fk_idLetu FOREIGN KEY (idLetu) REFERENCES let(idLetu) ON DELETE CASCADE
 );
 
+
+--------------------- TRIGGERY ---------------------
+CREATE OR REPLACE TRIGGER kontrolaVeku
+BEFORE INSERT ON Ucet
+FOR EACH ROW
+DECLARE
+    vek NUMBER;
+BEGIN
+    vek := EXTRACT(YEAR FROM SYSDATE) - :NEW.rokNarozeni;
+    IF vek < 18 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Osoba musí být starší než 18 let.');
+    END IF;
+END;
+/
+
+
+CREATE OR REPLACE TRIGGER aktualizacePoctuVolnychMist
+AFTER INSERT ON Letenka
+FOR EACH ROW
+DECLARE
+    volnaMista NUMBER;
+BEGIN
+    -- aktualni pocet volnych mist
+    SELECT pocetMist INTO volnaMista
+    FROM Let
+    WHERE idLetu = :new.idLetu;
+
+    volnaMista := volnaMista - 1;
+
+    -- Kontrola ze pocet volnych mist neklesne pod 0
+    IF volnaMista < 0 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Cannot add more tickets. No available seats.');
+    END IF;
+
+    -- Aktualizace poctu volnych mist
+    UPDATE Let
+    SET pocetMist = volnaMista
+    WHERE idLetu = :new.idLetu;
+END;
+/
+
+
 -- testovaci naplneni databaze
 INSERT INTO Ucet (jmeno, prijmeni, rokNarozeni) VALUES
 ('Jan', 'Novák', 1985);
@@ -87,7 +129,7 @@ INSERT INTO Ucet (jmeno, prijmeni, rokNarozeni) VALUES
 ('Bohuslav', 'Pavel', 1970);
 
 INSERT INTO Ucet (jmeno, prijmeni, rokNarozeni) VALUES
-('Richard', 'Novotný', 2001);
+('Richard', 'Novotný', 2005);
 
 INSERT INTO Ucet (jmeno, prijmeni, rokNarozeni) VALUES
 ('Jiří', 'Z Poděbrad', 1999);
@@ -120,7 +162,7 @@ INSERT INTO LeteckaSpolecnost (ICO, nazev, zemePusobeni, reditel) VALUES
 (89765432, 'Ryanair', 'Anglie', 'John Black');
 
 INSERT INTO Let (idLetu, typLetadla, pocetMist, ICO, kodLetiste_prilet, kodLetiste_odlet) VALUES
-(1, 'Airbus A320', 180, 12345678, 'PRG', 'BRQ');
+(1, 'Airbus A320', 2, 12345678, 'PRG', 'BRQ');
 
 INSERT INTO Let (idLetu, typLetadla, pocetMist, ICO, kodLetiste_prilet, kodLetiste_odlet) VALUES
 (2, 'Boeing 737', 220, 89765432, 'PRG', 'LON');
@@ -132,7 +174,7 @@ INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu, i
 (1, 1000, 'Economy', 1, 'Jakub', 'Horuba', 1, 3);
 
 INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu, idUctu) VALUES
-(2, 1200, 'Economy', 115, 'Jan', 'Prkenný', 2, 1);
+(2, 1200, 'Economy', 115, 'Jan', 'Prkenný', 1, 1);
 
 INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu, idUctu) VALUES
 (3, 1200, 'Economy', 154, 'Richard', 'Blue', 2, 4);
