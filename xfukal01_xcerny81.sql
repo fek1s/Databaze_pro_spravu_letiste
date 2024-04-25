@@ -16,6 +16,9 @@ drop table LETISTE
 drop table LETECKASPOLECNOST
 /
 
+drop sequence Letenka_ID_Sequence
+/
+
 create table Ucet (
     --id Uctu generovano automaticky
     idUctu number generated always as identity primary key,
@@ -120,6 +123,45 @@ BEGIN
 END;
 /
 
+-- Definice sekvence ID letenek
+CREATE SEQUENCE Letenka_ID_Sequence
+    START WITH 1;
+
+-- Trigger pro přiřazení ID letence podle aktualní hodnoty sekvence ID letenek 
+CREATE OR REPLACE TRIGGER Letenka_ID_Before_Insert
+    BEFORE INSERT ON Letenka
+    FOR EACH ROW
+BEGIN
+    SELECT Letenka_ID_Sequence.NEXTVAL
+    INTO :NEW.idLetenky
+    FROM DUAL;
+END;
+/
+
+--------------------- Prodedury ---------------------
+/*
+ Procedura pro vypsani seznamu letu pro letiste specifikovano kodem letiste
+ Tento kod se vklada do procedury jako parametr
+ */
+CREATE OR REPLACE PROCEDURE SeznamLetuProLetiste(p_kodLetiste in VARCHAR2)
+AS
+    CURSOR curLetu IS
+        SELECT idLetu, typLetadla, pocetMist
+            FROM Let
+                WHERE kodLetiste_prilet = p_kodLetiste OR  kodLetiste_odlet = p_kodLetiste;
+    BEGIN
+        FOR let_rec in curLetu LOOP
+            DBMS_OUTPUT.PUT_LINE('ID letu: ' || let_rec.idLetu || ', Typ letadla: ' || let_rec.typLetadla || ', Pocet mist:' || let_rec.pocetMist);
+        END loop;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            DBMS_OUTPUT.PUT_LINE('Nebyly nalezeny zadne lety pro zadane letiste.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Chyba'|| SQLERRM);
+END;
+/
+
+
 
 -- testovaci naplneni databaze
 INSERT INTO Ucet (jmeno, prijmeni, rokNarozeni) VALUES
@@ -177,12 +219,15 @@ INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu, i
 (2, 1200, 'Economy', 115, 'Jan', 'Prkenný', 1, 1);
 
 INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu, idUctu) VALUES
-(3, 1200, 'Economy', 154, 'Richard', 'Blue', 2, 4);
+(10, 1200, 'Economy', 154, 'Richard', 'Blue', 2, 4);
 
 INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu, idUctu) VALUES
 (4, 899, 'Economy', 199, 'Richard', 'Novotny', 3, 3);
 -- konec plneni databaze testovacimy daty
 
+CALL SeznamLetuProLetiste('LON');
+
+    
 -- Dotaz 1: Vypisuje jmeno a prijmeni zakaznika, ktery ma premiovy ucet a jeho slevu.
 SELECT U.jmeno, U.prijmeni, PU.sleva
 FROM Ucet U
@@ -201,13 +246,9 @@ JOIN LeteckaSpolecnost LS ON L.ICO = LS.ICO
 GROUP BY LS.nazev, L.typLetadla;
 
 -- Dotaz 4: Vypisuje vsechny lety, ktere maji nejake volna mista, které lze zakoupit
-SELECT *
+SELECT L.*
 FROM Let L
-WHERE EXISTS(
-    SELECT 1
-    FROM Letenka LE
-    WHERE L.idLetu = LE.idLetu
-);
+WHERE L.pocetMist > 0;
 
 -- Dotaz 5: vypisuje vsechny cestujici kteri leti s leteckeckou společností Ryanair
 SELECT L.jmeno , L.prijmeni, LE.typLetadla
@@ -226,3 +267,6 @@ SELECT Distinct LS.nazev
 FROM LeteckaSpolecnost LS
 JOIN Let L on LS.ICO = L.ICO
 Where L.typLetadla IN ('Boeing 737', 'Boeing 737 MAX', 'Boeing 747', 'Boeing 757');
+
+SELECT *
+    FROM Letenka
