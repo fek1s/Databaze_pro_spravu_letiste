@@ -183,6 +183,34 @@ AS
 END;
 /
 
+/*
+ Tato procedura vyhledá informace o letu na základě zadaného ID letu a vypíše je.
+ */
+CREATE OR REPLACE PROCEDURE VypisInformaceOLetu(p_idLetu in Let.idLetu%TYPE)
+AS 
+    v_typLetadla LeT.typLetadla%TYPE;
+    v_pocetMist LeT.pocetMist%TYPE;
+    v_priletLetiste LeT.kodLetiste_prilet%TYPE;
+    v_odletLetiste LeT.kodLetiste_odlet%TYPE;
+BEGIN 
+    SELECT typLetadla, pocetMist, kodLetiste_prilet, kodLetiste_odlet
+    INTO v_typLetadla, v_pocetMist , v_priletLetiste, v_odletLetiste
+    FROM LeT
+    WHERE idLetu = p_idLetu;
+    
+    DBMS_OUTPUT.PUT_LINE('Informace o letu:');
+    DBMS_OUTPUT.PUT_LINE('Typ letadla: ' || v_typLetadla);
+    DBMS_OUTPUT.PUT_LINE('Pocet mist: ' || v_pocetMist);
+    DBMS_OUTPUT.PUT_LINE(v_odletLetiste|| ' --> ' || v_priletLetiste);
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Pro zadané ID letu nebyly nalezeny žádné informace.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Chyba'|| SQLERRM);
+END;
+/
+
+
 -- testovaci naplneni databaze
 INSERT INTO Ucet (jmeno, prijmeni, rokNarozeni) VALUES
 ('Jan', 'Novák', 1985);
@@ -248,6 +276,8 @@ INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu, i
 CALL SeznamPriletuLetiste('LON');
 
 CALL SeznamOdletuLetiste('LON');
+
+CALL VypisInformaceOLetu(2);
 
 
 -- Dotaz 1: Vypisuje jmeno a prijmeni zakaznika, ktery ma premiovy ucet a jeho slevu.
