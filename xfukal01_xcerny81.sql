@@ -382,3 +382,24 @@ SELECT
 FROM Letenka L
          JOIN TypZakaznika TZ ON L.idUctu = TZ.idUctu;
 
+-- druhy clen tymu
+CREATE ROLE druhy_clen;
+
+-- Pridani prav druhemu clenovi tymu
+GRANT SELECT ON Let TO druhy_clen;
+GRANT SELECT ON Letenka TO druhy_clen;
+
+-- Vytvoreni m. pohledu pro druheho clena
+CREATE MATERIALIZED VIEW pohled_druheho_clena
+BUILD IMMEDIATE
+REFRESH COMPLETE
+AS
+SELECT L.*
+FROM Let L
+WHERE L.pocetMist > 0;
+
+-- Pridani prav druhemu clenovi tymu k jeho materializovanemu pohledu
+GRANT SELECT ON pohled_druheho_clena TO druhy_clen;
+
+-- Pouziti pohledu
+SELECT * FROM pohled_druheho_clena;
