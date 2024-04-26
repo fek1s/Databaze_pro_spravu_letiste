@@ -312,12 +312,52 @@ SELECT L.*
 FROM Let L
 WHERE L.pocetMist > 0;
 
+-----------------------------------------------------------------------------------
 -- Dotaz 5: vypisuje vsechny cestujici kteri leti s leteckeckou společností Ryanair
-SELECT L.jmeno , L.prijmeni, LE.typLetadla
-FROM Letenka L
-JOIN Let LE ON L.idLetu = LE.idLetu
-JOIN LeteckaSpolecnost LS on LE.ICO = LS.ICO
-WHERE LS.nazev = 'Ryanair';
+EXPLAIN PLAN FOR
+SELECT
+    L.jmeno,
+    L.prijmeni,
+    LE.typLetadla,
+    COUNT(*) AS pocet_letenek
+FROM
+    Letenka L
+JOIN
+    Let LE ON L.idLetu = LE.idLetu
+JOIN
+    LeteckaSpolecnost LS on LE.ICO = LS.ICO
+WHERE
+    LS.nazev = 'Ryanair'
+GROUP BY
+    L.jmeno,
+    L.prijmeni,
+    LE.typLetadla;
+SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY);
+
+-- Vytvoření indexu na sloupec mesto
+CREATE INDEX index_LS ON LeteckaSpolecnost(nazev);
+
+-- Znovu provedeni dotazu po zrychleni pomoci indexu
+EXPLAIN PLAN FOR
+SELECT
+    L.jmeno,
+    L.prijmeni,
+    LE.typLetadla,
+    COUNT(*) AS pocet_letenek
+FROM
+    Letenka L
+JOIN
+    Let LE ON L.idLetu = LE.idLetu
+JOIN
+    LeteckaSpolecnost LS on LE.ICO = LS.ICO
+WHERE
+    LS.nazev = 'Ryanair'
+GROUP BY
+    L.jmeno,
+    L.prijmeni,
+    LE.typLetadla;
+SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY);
+---------------------------------------------------------
 
 -- Dotaz 6: Vypočítá průměrnou cenu letenky pro každou třídu.
 SELECT trida, AVG(cena) AS prumer_ceny
