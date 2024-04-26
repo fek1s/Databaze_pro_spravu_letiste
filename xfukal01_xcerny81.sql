@@ -127,7 +127,7 @@ END;
 CREATE SEQUENCE Letenka_ID_Sequence
     START WITH 1;
 
--- Trigger pro přiřazení ID letence podle aktualní hodnoty sekvence ID letenek 
+-- Trigger pro přiřazení ID letence podle aktualní hodnoty sekvence ID letenek
 CREATE OR REPLACE TRIGGER Letenka_ID_Before_Insert
     BEFORE INSERT ON Letenka
     FOR EACH ROW
@@ -140,15 +140,15 @@ END;
 
 --------------------- Prodedury ---------------------
 /*
- Procedura pro vypsani seznamu letu pro letiste specifikovano kodem letiste
+ Procedura pro vypsani seznamu odletu pro letiste specifikovano kodem letiste
  Tento kod se vklada do procedury jako parametr
  */
-CREATE OR REPLACE PROCEDURE SeznamLetuProLetiste(p_kodLetiste in VARCHAR2)
+CREATE OR REPLACE PROCEDURE SeznamOdletuLetiste(p_kodLetiste in VARCHAR2)
 AS
     CURSOR curLetu IS
         SELECT idLetu, typLetadla, pocetMist
             FROM Let
-                WHERE kodLetiste_prilet = p_kodLetiste OR  kodLetiste_odlet = p_kodLetiste;
+                WHERE  kodLetiste_odlet = p_kodLetiste;
     BEGIN
         FOR let_rec in curLetu LOOP
             DBMS_OUTPUT.PUT_LINE('ID letu: ' || let_rec.idLetu || ', Typ letadla: ' || let_rec.typLetadla || ', Pocet mist:' || let_rec.pocetMist);
@@ -161,7 +161,27 @@ AS
 END;
 /
 
-
+/*
+ Procedura pro vypsani seznamu priletu pro letiste specifikovano kodem letiste
+ Tento kod se vklada do procedury jako parametr
+ */
+CREATE OR REPLACE PROCEDURE SeznamPriletuLetiste(p_kodLetiste in VARCHAR2)
+AS
+    CURSOR curLetu IS
+        SELECT idLetu, typLetadla, pocetMist
+            FROM Let
+                WHERE kodLetiste_prilet = p_kodLetiste;
+    BEGIN
+        FOR let_rec in curLetu LOOP
+            DBMS_OUTPUT.PUT_LINE('ID letu: ' || let_rec.idLetu || ', Typ letadla: ' || let_rec.typLetadla || ', Pocet mist:' || let_rec.pocetMist);
+        END loop;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            DBMS_OUTPUT.PUT_LINE('Nebyly nalezeny zadne lety pro zadane letiste.');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Chyba'|| SQLERRM);
+END;
+/
 
 -- testovaci naplneni databaze
 INSERT INTO Ucet (jmeno, prijmeni, rokNarozeni) VALUES
@@ -204,7 +224,7 @@ INSERT INTO LeteckaSpolecnost (ICO, nazev, zemePusobeni, reditel) VALUES
 (89765432, 'Ryanair', 'Anglie', 'John Black');
 
 INSERT INTO Let (idLetu, typLetadla, pocetMist, ICO, kodLetiste_prilet, kodLetiste_odlet) VALUES
-(1, 'Airbus A320', 2, 12345678, 'PRG', 'BRQ');
+(1, 'Airbus A320', 2, 12345678, 'LON', 'BRQ');
 
 INSERT INTO Let (idLetu, typLetadla, pocetMist, ICO, kodLetiste_prilet, kodLetiste_odlet) VALUES
 (2, 'Boeing 737', 220, 89765432, 'PRG', 'LON');
@@ -225,9 +245,11 @@ INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu, i
 (4, 899, 'Economy', 199, 'Richard', 'Novotny', 3, 3);
 -- konec plneni databaze testovacimy daty
 
-CALL SeznamLetuProLetiste('LON');
+CALL SeznamPriletuLetiste('LON');
 
-    
+CALL SeznamOdletuLetiste('LON');
+
+
 -- Dotaz 1: Vypisuje jmeno a prijmeni zakaznika, ktery ma premiovy ucet a jeho slevu.
 SELECT U.jmeno, U.prijmeni, PU.sleva
 FROM Ucet U
