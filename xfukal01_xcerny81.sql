@@ -45,9 +45,6 @@ create table Letiste (
     CONSTRAINT CheckCodeLength CHECK (length(kodLetiste) = 3)
 );
 
--- Vytvoření indexu na sloupec mesto
-CREATE INDEX index_mesto ON Letiste(mesto);
-
 create table LeteckaSpolecnost (
     ICO int primary key,
     nazev nvarchar2(255) not null,
@@ -87,6 +84,7 @@ create table Letenka (
 
 
 --------------------- TRIGGERY ---------------------
+-- tento trigger pri insert do Ucet vzdy skontroluje ze klient je starsi 18 let
 CREATE OR REPLACE TRIGGER kontrolaVeku
 BEFORE INSERT ON Ucet
 FOR EACH ROW
@@ -100,7 +98,7 @@ BEGIN
 END;
 /
 
-
+-- tento trigger aktualizuje pocet volnych mist na letu - dekrementuje pri pridani letenky na let
 CREATE OR REPLACE TRIGGER aktualizacePoctuVolnychMist
 AFTER INSERT ON Letenka
 FOR EACH ROW
@@ -190,17 +188,17 @@ END;
  Tato procedura vyhledá informace o letu na základě zadaného ID letu a vypíše je.
  */
 CREATE OR REPLACE PROCEDURE VypisInformaceOLetu(p_idLetu in Let.idLetu%TYPE)
-AS 
+AS
     v_typLetadla LeT.typLetadla%TYPE;
     v_pocetMist LeT.pocetMist%TYPE;
     v_priletLetiste LeT.kodLetiste_prilet%TYPE;
     v_odletLetiste LeT.kodLetiste_odlet%TYPE;
-BEGIN 
+BEGIN
     SELECT typLetadla, pocetMist, kodLetiste_prilet, kodLetiste_odlet
     INTO v_typLetadla, v_pocetMist , v_priletLetiste, v_odletLetiste
     FROM LeT
     WHERE idLetu = p_idLetu;
-    
+
     DBMS_OUTPUT.PUT_LINE('Informace o letu:');
     DBMS_OUTPUT.PUT_LINE('Typ letadla: ' || v_typLetadla);
     DBMS_OUTPUT.PUT_LINE('Pocet mist: ' || v_pocetMist);
@@ -276,18 +274,23 @@ INSERT INTO Letenka (idLetenky, cena, trida, sedadlo, jmeno, prijmeni, idLetu, i
 (4, 899, 'Economy', 199, 'Richard', 'Novotny', 3, 3);
 -- konec plneni databaze testovacimy daty
 
+
+-- volani procedur pro predvedeni funkcionality
 CALL SeznamPriletuLetiste('LON');
 
 CALL SeznamOdletuLetiste('LON');
 
 CALL VypisInformaceOLetu(2);
 
+-- Vytvoření indexu na sloupec mesto v tabulce letiste
+CREATE INDEX index_mesto ON Letiste(mesto);
+
 -- Dotaz pro ukazku rychleho vyhledavani mesta v tabulce letiste
 EXPLAIN PLAN FOR
 SELECT *
 FROM Letiste
 WHERE mesto = 'Praha';
--- Dotaz pro zobrazeni "explain plan" tabulky
+-- Zobrazeni "explain plan" tabulky
 SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY);
 
 -- Dotaz 1: Vypisuje jmeno a prijmeni zakaznika, ktery ma premiovy ucet a jeho slevu.
@@ -315,47 +318,27 @@ WHERE L.pocetMist > 0;
 -----------------------------------------------------------------------------------
 -- Dotaz 5: vypisuje vsechny cestujici kteri leti s leteckeckou společností Ryanair
 EXPLAIN PLAN FOR
-SELECT
-    L.jmeno,
-    L.prijmeni,
-    LE.typLetadla,
-    COUNT(*) AS pocet_letenek
-FROM
-    Letenka L
-JOIN
-    Let LE ON L.idLetu = LE.idLetu
-JOIN
-    LeteckaSpolecnost LS on LE.ICO = LS.ICO
-WHERE
-    LS.nazev = 'Ryanair'
-GROUP BY
-    L.jmeno,
-    L.prijmeni,
-    LE.typLetadla;
+SELECT L.jmeno, L.prijmeni, LE.typLetadla, COUNT(*) AS pocet_letenek
+FROM Letenka L
+JOIN Let LE ON L.idLetu = LE.idLetu
+JOIN LeteckaSpolecnost LS ON LE.ICO = LS.ICO
+WHERE LS.nazev = 'Ryanair'
+GROUP BY L.jmeno, L.prijmeni, LE.typLetadla;
+-- Zobrazeni "explain plan" tabulky
 SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY);
 
--- Vytvoření indexu na sloupec mesto
+-- Vytvoření indexu na sloupec mestov tabulce LeteckaSpolecnost
 CREATE INDEX index_LS ON LeteckaSpolecnost(nazev);
 
 -- Znovu provedeni dotazu po zrychleni pomoci indexu
 EXPLAIN PLAN FOR
-SELECT
-    L.jmeno,
-    L.prijmeni,
-    LE.typLetadla,
-    COUNT(*) AS pocet_letenek
-FROM
-    Letenka L
-JOIN
-    Let LE ON L.idLetu = LE.idLetu
-JOIN
-    LeteckaSpolecnost LS on LE.ICO = LS.ICO
-WHERE
-    LS.nazev = 'Ryanair'
-GROUP BY
-    L.jmeno,
-    L.prijmeni,
-    LE.typLetadla;
+SELECT L.jmeno, L.prijmeni, LE.typLetadla, COUNT(*) AS pocet_letenek
+FROM Letenka L
+JOIN Let LE ON L.idLetu = LE.idLetu
+JOIN LeteckaSpolecnost LS ON LE.ICO = LS.ICO
+WHERE LS.nazev = 'Ryanair'
+GROUP BY L.jmeno, L.prijmeni, LE.typLetadla;
+-- Zobrazeni "explain plan" tabulky
 SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY);
 ---------------------------------------------------------
 
