@@ -45,6 +45,9 @@ create table Letiste (
     CONSTRAINT CheckCodeLength CHECK (length(kodLetiste) = 3)
 );
 
+-- Vytvoření indexu na sloupec mesto
+CREATE INDEX index_mesto ON Letiste(mesto);
+
 create table LeteckaSpolecnost (
     ICO int primary key,
     nazev nvarchar2(255) not null,
@@ -279,6 +282,13 @@ CALL SeznamOdletuLetiste('LON');
 
 CALL VypisInformaceOLetu(2);
 
+-- Dotaz pro ukazku rychleho vyhledavani mesta v tabulce letiste
+EXPLAIN PLAN FOR
+SELECT *
+FROM Letiste
+WHERE mesto = 'Praha';
+-- Dotaz pro zobrazeni "explain plan" tabulky
+SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY);
 
 -- Dotaz 1: Vypisuje jmeno a prijmeni zakaznika, ktery ma premiovy ucet a jeho slevu.
 SELECT U.jmeno, U.prijmeni, PU.sleva
