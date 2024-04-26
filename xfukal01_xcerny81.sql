@@ -354,4 +354,31 @@ JOIN Let L on LS.ICO = L.ICO
 Where L.typLetadla IN ('Boeing 737', 'Boeing 737 MAX', 'Boeing 747', 'Boeing 757');
 
 SELECT *
-    FROM Letenka
+    FROM Letenka;
+
+-- Dotaz 8: Pro daný účet a letenku vypíše cenu letenky a pokud je zákazník prémiový, tak vypíše cenu po slevě. 
+-- Slouží pro klasifikaci zákazníků na standardní a prémiové.
+WITH TypZakaznika AS (
+    SELECT
+        U.idUctu,
+        CASE
+            WHEN PU.idUctu IS NOT NULL THEN 'Premiovy'
+            ELSE 'Standardni'
+            END AS TypZakaznika,
+        PU.sleva
+    FROM Ucet U
+             LEFT JOIN PremiovyUcet PU ON U.idUctu = PU.idUctu
+)
+-- Vypisuje cenu letenky a pokud je zakaznik premiovy, tak vypise cenu po slevě
+SELECT
+    L.idLetenky,
+    L.cena,
+    L.trida,
+    TZ.TypZakaznika,
+    CASE
+        WHEN TZ.TypZakaznika = 'Premiovy' THEN L.cena * (100 - TZ.sleva) / 100
+        ELSE L.cena
+        END AS CenaPoSlevě
+FROM Letenka L
+         JOIN TypZakaznika TZ ON L.idUctu = TZ.idUctu;
+
