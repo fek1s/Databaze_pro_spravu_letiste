@@ -84,7 +84,7 @@ create table Letenka (
 
 
 --------------------- TRIGGERY ---------------------
--- tento trigger pri insert do Ucet vzdy skontroluje ze klient je starsi 18 let
+-- tento trigger pri insert do Ucet vzdy zkontroluje ze klient je starsi 18 let
 CREATE OR REPLACE TRIGGER kontrolaVeku
 BEFORE INSERT ON Ucet
 FOR EACH ROW
@@ -128,7 +128,7 @@ END;
 CREATE SEQUENCE Letenka_ID_Sequence
     START WITH 1;
 
--- Trigger pro přiřazení ID letence podle aktualní hodnoty sekvence ID letenek
+-- Trigger pro prirazeni ID letence podle aktualni hodnoty sekvence ID letenek
 CREATE OR REPLACE TRIGGER Letenka_ID_Before_Insert
     BEFORE INSERT ON Letenka
     FOR EACH ROW
@@ -185,7 +185,7 @@ END;
 /
 
 /*
- Tato procedura vyhledá informace o letu na základě zadaného ID letu a vypíše je.
+ Tato procedura vyhleda informace o letu na zaklade zadaneho ID letu a vypise je.
  */
 CREATE OR REPLACE PROCEDURE VypisInformaceOLetu(p_idLetu in Let.idLetu%TYPE)
 AS
@@ -316,7 +316,7 @@ FROM Let L
 WHERE L.pocetMist > 0;
 
 -----------------------------------------------------------------------------------
--- Dotaz 5: vypisuje vsechny cestujici kteri leti s leteckeckou společností Ryanair
+-- Dotaz 5: Vypisuje vsechny cestujici kteri leti s leteckeckou společností Ryanair
 EXPLAIN PLAN FOR
 SELECT L.jmeno, L.prijmeni, LE.typLetadla, COUNT(*) AS pocet_letenek
 FROM Letenka L
@@ -327,7 +327,7 @@ GROUP BY L.jmeno, L.prijmeni, LE.typLetadla;
 -- Zobrazeni "explain plan" tabulky
 SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY);
 
--- Vytvoření indexu na sloupec mestov tabulce LeteckaSpolecnost
+-- Vytvoreni indexu na sloupec mestov tabulce LeteckaSpolecnost
 CREATE INDEX index_LS ON LeteckaSpolecnost(nazev);
 
 -- Znovu provedeni dotazu po zrychleni pomoci indexu
@@ -356,8 +356,8 @@ Where L.typLetadla IN ('Boeing 737', 'Boeing 737 MAX', 'Boeing 747', 'Boeing 757
 SELECT *
     FROM Letenka;
 
--- Dotaz 8: Pro daný účet a letenku vypíše cenu letenky a pokud je zákazník prémiový, tak vypíše cenu po slevě. 
--- Slouží pro klasifikaci zákazníků na standardní a prémiové.
+-- Dotaz 8: Pro dany ucet a letenku vypise cenu letenky a pokud je zakaznik premiovy, tak vypise cenu po sleve.
+-- Slouzi pro klasifikaci zakazniku na standardni a premiove.
 WITH TypZakaznika AS (
     SELECT
         U.idUctu,
@@ -378,19 +378,19 @@ SELECT
     CASE
         WHEN TZ.TypZakaznika = 'Premiovy' THEN L.cena * (100 - TZ.sleva) / 100
         ELSE L.cena
-        END AS CenaPoSlevě
+        END AS CenaPoSleve
 FROM Letenka L
          JOIN TypZakaznika TZ ON L.idUctu = TZ.idUctu;
 
--- druhy clen tymu
-CREATE ROLE druhy_clen;
+-- pridani druheho clena tymu
+-- CREATE ROLE druhy_clen;
 
 -- Pridani prav druhemu clenovi tymu
-GRANT SELECT ON Let TO druhy_clen;
-GRANT SELECT ON Letenka TO druhy_clen;
+GRANT SELECT ON Let TO XCERNY81;
+GRANT SELECT ON Letenka TO XCERNY81;
 
 -- Vytvoreni m. pohledu pro druheho clena
-CREATE MATERIALIZED VIEW pohled_druheho_clena
+CREATE OR REPLACE MATERIALIZED VIEW pohled_druheho_clena
 BUILD IMMEDIATE
 REFRESH COMPLETE
 AS
@@ -399,7 +399,7 @@ FROM Let L
 WHERE L.pocetMist > 0;
 
 -- Pridani prav druhemu clenovi tymu k jeho materializovanemu pohledu
-GRANT SELECT ON pohled_druheho_clena TO druhy_clen;
+GRANT SELECT ON pohled_druheho_clena TO XCERNY81;
 
 -- Pouziti pohledu
 SELECT * FROM pohled_druheho_clena;
