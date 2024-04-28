@@ -19,6 +19,9 @@ drop table LETECKASPOLECNOST
 drop sequence Letenka_ID_Sequence
 /
 
+drop materialized view pohled_druheho_clena
+/
+
 create table Ucet (
     --id Uctu generovano automaticky
     idUctu number generated always as identity primary key,
@@ -390,7 +393,7 @@ GRANT SELECT ON Let TO XCERNY81;
 GRANT SELECT ON Letenka TO XCERNY81;
 
 -- Vytvoreni m. pohledu pro druheho clena
-CREATE OR REPLACE MATERIALIZED VIEW pohled_druheho_clena
+CREATE MATERIALIZED VIEW pohled_druheho_clena
 BUILD IMMEDIATE
 REFRESH COMPLETE
 AS
